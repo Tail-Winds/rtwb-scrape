@@ -2,7 +2,9 @@ library(googledrive)
 library(googlesheets4)
 library(rvest)
 
-drive_auth(path = Sys.getenv('GDRIVE_PAT'))
+drive_deauth()
+drive_auth(path = Sys.getenv('GDRIVE_PAT'),
+           email = Sys.getenv('GDRIVE_USER'))
 
 yesterday <- format(Sys.Date()-1, '%Y%m%d')
 
@@ -28,3 +30,6 @@ sheet_append(
   sheet = 1
 )
   
+# https://www.r-bloggers.com/2021/09/creating-a-data-pipeline-with-github-actions-the-googledrive-package-for-the-canadian-premier-league-soccer-data-initiative/
+
+# https://github.com/marketplace/actions/google-sheets-secrets-action
