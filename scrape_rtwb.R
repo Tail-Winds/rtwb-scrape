@@ -3,8 +3,7 @@ library(googlesheets4)
 library(rvest)
 
 drive_deauth()
-drive_auth(path = Sys.getenv('GDRIVE_PAT'),
-           email = Sys.getenv('GDRIVE_USER'))
+drive_auth_configure(api_key = Sys.getenv('GDRIVE_PAT'))
 
 yesterday <- format(Sys.Date()-1, '%Y%m%d')
 
