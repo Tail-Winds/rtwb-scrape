@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      GDRIVE_USER: ${{ secrets.GDRIVE_USER }}
-      GDRIVE_PAT: ${{ secrets.GDRIVE_TOKEN }}
+      GDRIVE_PAT: ${{ secrets.GDRIVE_LONGTOKEN }}
       
     steps:
     - name: Check out GH repository
