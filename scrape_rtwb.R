@@ -2,8 +2,7 @@ library(googledrive)
 library(googlesheets4)
 library(rvest)
 
-drive_auth(token = Sys.getenv(GDRIVE_PAT),
-           email = Sys.getenv(GDRIVE_USER))
+drive_auth(path = Sys.getenv(GDRIVE_LONGTOKEN))
 
 yesterday <- format(Sys.Date()-1, '%Y%m%d')
 
