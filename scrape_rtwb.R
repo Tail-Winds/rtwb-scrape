@@ -1,6 +1,7 @@
 library(googledrive)
 library(googlesheets4)
 library(rvest)
+library(dplyr)
 
 drive_deauth()
 drive_auth_configure(api_key = Sys.getenv('GDRIVE_PAT'))

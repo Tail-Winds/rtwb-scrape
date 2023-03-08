@@ -34,6 +34,7 @@ jobs:
           any::googledrive
           any::googlesheets4
           any::rvest
+          any::dplyr
         
     - name: Scrape with R script
       run: Rscript "scrape_rtwb.R"
