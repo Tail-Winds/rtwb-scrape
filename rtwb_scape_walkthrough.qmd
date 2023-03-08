@@ -1,0 +1,221 @@
+---
+title: "RTWB scrape"
+format:
+  html:
+    self-contained: true
+    fontsize: "smaller"
+---
+# Bringing things up to date
+## Figure out API
+
+The first thing to do is to click on a bunch of links and see if you can figure out any pattern between them. This gives you a sense of the website's "Application Programming Interface" (API).
+
+Clicking on the dates gives you:
+
+- Today
+  - http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary.html#table
+- Yesterday:
+  - http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_20230307.html
+- Day before that:
+  - http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_20230306.html#table
+- And before that:
+  - http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_20230305.html#table
+  
+What is similar? What is different? It looks like we're lucky and this is a relatively simple API in the form of:
+
+  "http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_"
+  
+  plus
+
+  date in YYYYMMDD form
+
+  plus
+
+  ".html"
+
+## Make a URL factory
+
+So, we can create the URLs to access the tables in each date by `paste`-ing things together.
+
+```{r}
+make_urls <- function(date){
+   paste0('http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_',
+                    date,
+                    '.html') |> 
+    URLencode()
+}
+```
+
+
+The first records start on July 20, 2022. We can make a vector of dates by day between then and March 6, 2023 (I'm writing this on March 8, 2023 and assuming that we want to record what yesterday's count was).
+
+```{r}
+dates <- seq(as.Date('2022-07-20'), as.Date('2023-03-06'), by = 'day')
+
+head(dates)
+tail(dates)
+```
+
+But, the URL takes the dates in "YYYYMMDD" form. In R, `Date` classes print as "YYYY-MM-DD". We can change that using `format`.
+
+```{r}
+dates <- format(dates, format = '%Y%m%d')
+head(dates)
+```
+Now, does our URL factory work how we want it?
+
+```{r}
+make_urls(dates[1:2])
+```
+
+Seems so.
+
+## "Download" the website.
+
+...well, not really. We're just reading the HTML returned by the URL; we'll use the `rvest` package for this. We'll do it for just the first date to start with.
+
+Aside: from here on out, I'm going to be building the code using the "pipe operator" (`|>`). It just means "take the result from the previous thing and put it in the next thing".
+
+```{r}
+library(rvest)
+
+dates[1] |> 
+  make_urls() |> 
+  read_html()
+```
+
+That doesn't mean too much. What we need to do is crawl through the HTML tree to find the table that we want. Unfortunately, that can be excruciating -- but there is a short cut!
+
+## Find the table
+
+The shortcut is to go to one of the URLs listed above and check out the site's HTML. In Chrome you can do this with `Ctrl/Cmd + Shift + I`, or right click anywhere on the website and select "Inspect".
+
+In the window that opens up, you'll see the HTML shown in the "Elements" tab. When you hover over the text, it'll highlight the section to which it is referring on the website. By expanding the collapsable sections, keep going down the chain until you see that the table is highlighted. Right click that section in the "Elements" tab, and select `Copy > Copy full XPath`. You'll find that you'll have copied something that looks like this: `/html/body/table`.
+
+We now select the HTML element with that XPath and convert it to a table. In these tables, empty cells represent NAs, so I'll let the `html_table` know that.
+
+```{r}
+dates[1] |> 
+  make_urls() |> 
+  read_html() |> 
+  html_element(xpath = '/html/body/table') |> 
+  html_table(na.strings = '')
+```
+
+What we're actually interested in is the number of non-NA values in the "Tracks" column. We can select non-NA values using the `filter` function, then `tally` how many there are. Both of these functions are in the `dplyr` package. Note that `!` means "not" and `is.na` tells you if something is NA, so `!is.na` is like Yoda saying "is not NA" ("NOT is NA").
+
+```{r}
+#| message: false
+library(dplyr)
+
+dates[1] |> 
+  make_urls() |> 
+  read_html() |> 
+  html_element(xpath = '/html/body/table') |> 
+  html_table(na.strings = '') |> 
+  filter(!is.na(Tracks)) |> 
+  tally()
+```
+
+Well, that's well and good, but we've lost the date. This next bit is a little "[draw the rest of the owl](https://i.kym-cdn.com/photos/images/newsfeed/000/572/078/d6d.jpg)" so I'll try to explain.
+
+I'm going to `summarize` (a `dplyr` function) the data, with resulting columns being:
+
+- `date`: the unique values in the Date/time column (`unique`), where the values have had everything AFTER a space substituted with nothing (`gsub(' .*', '')`; the "`.*`" means "everything after")
+  - All of the values of the Date/time column are in the form "DATEspaceTIME"
+  - I'm substituting everything after the space with nothing, so that will remove the TIME portion, leaving only the DATE
+  - There is only one date in each URL, so it will give me one date when I look for the unique values in the vector I've just made
+- `n_reviewed`: the sum of the non-NA values in the Tracks column
+
+```{r}
+make_urls(dates[1]) |> 
+  read_html() |> 
+  html_element(xpath = '/html/body/table') |> 
+  html_table(na.strings = '') |> 
+  summarize(date = unique(gsub(pattern = ' .*', replacement = '', `Date/time`)),
+            n_reviewed = sum(!is.na(Tracks)))
+```
+
+## Make the computer a trained monkey
+
+Now we just need to tell R to do exactly what we've done for one date/URL to all of the dates/URLs. The best way to do this is to cram everything we've just done into one function. That way, we just feed the function a date, and away it goes!
+
+```{r}
+n_reviewed <- function(date){
+  # make the URL using the provided date
+  paste0('http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_',
+         date,
+         '.html') |> 
+    
+    # properly encode the URL. Not necessary here, but good practice for URLs
+    # that have spaces or other interesting characters
+    URLencode() |> 
+    
+    # read the website's HTML
+    read_html() |> 
+    
+    # pull out the detection table
+    html_element(xpath = '/html/body/table') |> 
+    
+    # convert the table to a data frame
+    html_table(na.strings = '') |> 
+    
+    # pull out the date and count the number of pitch tracks
+    summarize(date = unique(gsub(pattern = ' .*', replacement = '', `Date/time`)),
+              n_reviewed = sum(!is.na(Tracks)))
+}
+```
+
+```{r}
+n_reviewed(20220720)
+```
+
+## Loop (or lapply) over all of the dates
+
+In most coding languages, we'd loop over all of the dates (apply the function to each date). We can do that in R, too, but you'll most often see `lapply` be used. This takes each element of a vector, runs a function on it, and saves it as a corresponding element in a list.
+
+Using the `dates` vector we made above, that means that the code below will take the first date and run it through our `n_reviewed` function, just like we just did. Then take the second and do the same. Then the third, fourth, fifth, etc. There are 231 dates, so this will take a few seconds.
+
+```{r}
+all_n_reviewed <- lapply(dates,
+                         n_reviewed)
+```
+
+Everything is now stored in a list.
+
+```{r}
+all_n_reviewed[1:3]
+```
+
+We can use `bind_rows` to collapse this into one data frame.
+
+```{r}
+all_n_reviewed <- bind_rows(all_n_reviewed)
+
+all_n_reviewed
+```
+
+## Write to Google Sheets
+
+When you run this code, you'll be prompted to log in. Once that happens, it will write the whole shebang to the linked Google Sheet.
+
+```{r}
+library(googlesheets4)
+
+write_sheet(all_n_reviewed, 'https://docs.google.com/spreadsheets/d/10tMVbEwzHaSPVQwaN8QP_BegXoIKNUKzJoaYkrViWIA/edit#gid=0',
+            sheet = 1)
+
+```
+
+# Appending new rows
+
+Now that everything is up to date, we just need to run this once per day or so to add to the Google sheet. We can use the `n_reviewed` function we created above along with the dates that are needed to be added as an argument to `sheet_append` (a `googlesheets4` function). `sheet_append` will tack the new data to the bottom of the Google Sheet.
+
+```{r}
+sheet_append(
+  'https://docs.google.com/spreadsheets/d/10tMVbEwzHaSPVQwaN8QP_BegXoIKNUKzJoaYkrViWIA/edit#gid=0',
+  n_reviewed(20230307),
+  sheet = 1
+)
+```
+
