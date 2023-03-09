@@ -5,9 +5,6 @@ on:
   workflow_dispatch:
   schedule:
     - cron:  '30 5 * * *'
-  push:
-    branches:
-      main
 
 jobs: 
   scrape_it:
@@ -15,8 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      GDRIVE_PAT: ${{ secrets.GDRIVE_LONGTOKEN }}
-      GDRIVE_USER: ${{ secrets.GDRIVE_USER }}
+      GDRIVE_PAT: ${{ secrets.GDRIVE_PAT }}
       
     steps:
     - name: Check out GH repository
@@ -31,7 +27,6 @@ jobs:
       uses: r-lib/actions/setup-r-dependencies@v2
       with:
         packages: |
-          any::googledrive
           any::googlesheets4
           any::rvest
           any::dplyr

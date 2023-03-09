@@ -1,10 +1,8 @@
-library(googledrive)
 library(googlesheets4)
 library(rvest)
 library(dplyr)
 
-drive_deauth()
-drive_auth_configure(api_key = Sys.getenv('GDRIVE_PAT'))
+gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 
 yesterday <- format(Sys.Date()-1, '%Y%m%d')
 
@@ -25,7 +23,7 @@ n_reviewed <- function(date){
 }
 
 sheet_append(
-  'https://docs.google.com/spreadsheets/d/11qKDM3nNPgC802fe8gFRVJ6J3dVfmAR1uq0tJVlFvAY/edit#gid=0',
+  'https://docs.google.com/spreadsheets/d/10tMVbEwzHaSPVQwaN8QP_BegXoIKNUKzJoaYkrViWIA/edit#gid=0',
   n_reviewed(yesterday),
   sheet = 1
 )

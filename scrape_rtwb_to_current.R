@@ -1,12 +1,13 @@
-library(googledrive)
 library(googlesheets4)
 library(rvest)
 
+# This brings the sheet up-to-date with March 6, 2023
+
 # https://josiahparry.medium.com/googlesheets4-authentication-for-deployment-9e994b4c81d6
 # https://googlesheets4.tidyverse.org/articles/drive-and-sheets.html
+# https://github.com/Ryo-N7/CanPL_Analysis
 
-# drive_auth()
-
+gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 
 n_reviewed <- function(date){
   
@@ -30,5 +31,5 @@ all_n_reviewed <- lapply(dates,
                          n_reviewed)
 all_n_reviewed <- dplyr::bind_rows(all_n_reviewed)
 
-write_sheet(all_n_reviewed, 'https://docs.google.com/spreadsheets/d/11qKDM3nNPgC802fe8gFRVJ6J3dVfmAR1uq0tJVlFvAY/edit#gid=0',
+write_sheet(all_n_reviewed, 'https://docs.google.com/spreadsheets/d/10tMVbEwzHaSPVQwaN8QP_BegXoIKNUKzJoaYkrViWIA/edit#gid=0',
             sheet = 1)
