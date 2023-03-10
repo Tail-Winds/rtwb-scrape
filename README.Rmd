@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 ```
 
 # Scrape data from the Ocean City buoy site
-File in this repository relate to scraping the data on the [Ocean City Real-time Whale Buoy (RTWB) website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml).
+Files in this repository relate to scraping the data on the [Ocean City Real-time Whale Buoy (RTWB) website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml).
 
 ## Summarize number of analyzed periods
 
@@ -27,7 +27,7 @@ Should the Google Sheet get deleted, run [`scrape_rtwb_to_current.R`](https://gi
 
 ## Daily occurrence table
 
-[`daily_occurrence_scraper.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/daily_occurrence_scraper.R) pulls in the table under "Data analyst review" on the [RTWB website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml). The routine runs immediately after that outlined above at 9:00AM UTC.
+Another GitHub Action is used to pull in the table under "Data analyst review" on the [RTWB website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml). The routine sources [`daily_occurrence_scraper.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/daily_occurrence_scraper.R) and runs immediately after that outlined above at 9:00AM UTC.
 
 The general idea is:
 
@@ -35,4 +35,4 @@ The general idea is:
 2) Two **NEW** sheets are made, including their time stamps in UTC;
 3) "Scraper - Full table xxxx" is the table noted above on the main site, with color-coded detection/possible detection/no detection information converted to text;
 4) "Scraper - Summary xxxx" is the sum of detections and possible detections per species, per month;
-    - The last row of "Scraper - Summary" are the respective column sums
+    - The last row of "Scraper - Summary" are the respective column sums.

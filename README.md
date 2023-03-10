@@ -3,7 +3,7 @@
 
 # Scrape data from the Ocean City buoy site
 
-File in this repository relate to scraping the data on the [Ocean City
+Files in this repository relate to scraping the data on the [Ocean City
 Real-time Whale Buoy (RTWB)
 website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml).
 
@@ -37,10 +37,12 @@ with yesterday’s date to bring everything up to date.
 
 ## Daily occurrence table
 
-[`daily_occurrence_scraper.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/daily_occurrence_scraper.R)
-pulls in the table under “Data analyst review” on the [RTWB
+Another GitHub Action is used to pull in the table under “Data analyst
+review” on the [RTWB
 website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml). The routine
-runs immediately after that outlined above at 9:00AM UTC.
+sources
+[`daily_occurrence_scraper.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/daily_occurrence_scraper.R)
+and runs immediately after that outlined above at 9:00AM UTC.
 
 The general idea is:
 
@@ -51,4 +53,5 @@ The general idea is:
     information converted to text;
 4)  “Scraper - Summary xxxx” is the sum of detections and possible
     detections per species, per month;
-    - The last row of “Scraper - Summary” are the respective column sums
+    - The last row of “Scraper - Summary” are the respective column
+      sums.
