@@ -24,10 +24,8 @@ and open with your web browser.
 This process uses the code in
 [`scrape_rtwb.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/scrape_rtwb.R)
 and a secret access token. The process to set the access token is
-currently outlined at
-[`quick permissitions notes.txt`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/walkthroughs/quick%20permissions%20notes.txt);
-this will be updated to a markdown document with a better narrative
-soon(?).
+outlined at
+[`google_and_github.html`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/walkthroughs/google_and_github.html).
 
 Should the Google Sheet get deleted, run
 [`scrape_rtwb_to_current.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/other_code/scrape_rtwb_to_current.R)

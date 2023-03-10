@@ -1,0 +1,118 @@
+---
+title: "Using Google with GitHub Actions"
+format:
+  html:
+    self-contained: true
+    fontsize: "smaller"
+---
+
+## So, you want to automate saving things in a Google Sheet?
+
+When scheduling some code to run with [GitHub Actions](https://docs.github.com/en/actions), this is the most common use-case. The most-difficult part of the whole process is getting the Google Sheets/Google Drive permissions set up.
+
+I've spent many hours failing at this, so this document is meant to leave a trail so I don't have to fail twice.
+
+## Permissions needed
+
+The [googledrive](https://googledrive.tidyverse.org) and [googlesheets4](https://googlesheets4.tidyverse.org) packages make it as easy as possible to interface with Google Drive and Google Sheets in R. Both leverage the [gargle](https://gargle.r-lib.org/) package to set up the security tokens needed to interface with all of the Google services.
+
+The googledrive package uses the [`drive_auth`](https://googledrive.tidyverse.org/reference/drive_auth.html) function to interface with gargle and set up your authorization, while googlesheets4 uses [`gs4_auth`](https://googlesheets4.tidyverse.org/reference/gs4_auth.html). This process is easy, streamlined, and interactive -- it opens up a browser window, you log into your Google account and tell it "yes, I want this to be able to access my files", and that's it! Unfortunately, if we're running this in the cloud somewhere using GitHub Actions we're not going to be there to click the button.
+
+## Google Cloud Platform
+
+Both packages point to an article in gargle entitled ["How to get your own API credentials"](https://gargle.r-lib.org/articles/get-api-credentials.html). This does an excellent job of walking through the how and why; the section of interest to us is ["Service account token"](https://gargle.r-lib.org/articles/get-api-credentials.html#service-account-token).
+
+The first step they outline is to go to the Google Cloud Platform website: <https://console.cloud.google.com>. Once you're there, **make sure you're logged in to the correct account**! Again, I emphasize:
+
+**MAKE SURE YOU'RE LOGGED IN TO THE CORRECT ACCOUNT!**
+
+Look in the top right, and make sure the correct profile picture is staring back at you. I ran into many hours of frustration trying everything to get permissions to work and experiencing failure after frustrating failure. Then I found out that I had made the key in my *personal* account rather than my *institutional* account.🤦
+
+Once you are logged in to the **CORRECT** account, create a new project (or select an exiting one) using the drop-down menu next to the "GoogleCloud" banner at the top.
+
+## Create a service account token
+
+Now we'll create a service account token.
+
+1) Click the navigation menu, and select "IAM & Admin", then "Service Accounts".
+2) At the top, next to "Service accounts" select "+ CREATE SERVICE ACCOUNT".
+3) Add a name (I suggest something somewhat descriptive) and the "Service account ID" section will autofill. Add a description if you desire.
+4) This token will basically be a fake robot person -- you can select what projects and permissions this fake person will have, or you can skip it. You can change these later -- no biggy.
+5) Click "DONE".
+6) Click your newly-created service account and go to the "KEYS" tab.
+7) Click "ADD KEY", "Create new key", select "JSON", then "CREATE".
+8) This will download a file. Pay attention to where it goes!
+
+## Turn on the Google Sheets/Drive API for your GCP project
+
+Now, we'll enable the Google Sheets and/or Google Drive API to allow the service account token to work.
+
+1) Click the menu, then "APIs & Services".
+2) Search for Google Sheets in the search bar.
+3) Select "Google Sheets API" from the results.
+4) Click "ENABLE".
+5) Repeat for Google Drive, if necessary.
+
+## Fake Google Robot People
+
+You've basically just created a fake Google robot person. You need to give the fake-Google-robot-person access to the document (like you would a real person) using the fake-Google-robot-person email that is listed within the Service Accounts section.
+
+1) In the "Service accounts" section we just visited, you can see your service account token listed by an email. It should be something like "YOUR-SERVICE-ACCOUNT-NAME@YOUR-GCP-PROJECT-NAME.iam.gserviceaccount.com"
+2) Navigate to your Google Drive/Sheet you want it to be able to access
+3) If a Google Sheet, click "share" on the top right, paste in the robot-person email, and share it. For a Google Drive, navigate to the folder/item you'd like to share and do the same.
+
+## Add your token to GitHub Action secrets
+
+We're nearing the end!
+
+1) Go into the GitHub repository that houses your GitHub Actions.
+2) Click "Settings".
+3) Under "Security" in the menu on the left side, select "Secrets and variables" and then "Actions".
+4) Click "New repository secret".
+5) Copy/paste the text in the file that was downloaded when you created your service account token and paste it into the "Secret" section.
+6) Give the secret a name.
+7) Click "Add secret".
+
+Your service access token can now be added to the .Renviron of the runner created for your GitHub Action. Don't think too hard about what this means -- for us, it just means that we can access the token in a secret way using the name we just gave the secret using `Sys.getenv('NAME_OF_MY_SECRET')`.
+
+
+## Coding on your computer
+
+When working through the code on your computer, use the `path` argument to `googledrive::drive_auth` or `googlesheets4::gs4_auth` to tell R where you find your service access token.
+
+```{r}
+#| eval: false
+
+# for googledrive
+drive_auth(path = 'path/to/my/service_token.json')
+
+# for googlesheets4
+gs4_auth(path = 'path/to/my/service_token.json')
+```
+
+When you are ready to incorporate this into a GitHub Action, change this to `Sys.getenv('NAME_OF_MY_SECRET')`.
+
+```{r}
+#| eval: false
+
+gs4_auth(path = Sys.getenv('NAME_OF_MY_SECRET'))
+```
+
+## GitHub Actions
+
+Going over GitHub Actions and creating the needed workflow files is beyond the scope of this document.
+
+Working back-to-front in the [workflow YAML for this repository](https://github.com/Tail-Winds/rtwb-scrape/blob/main/.github/workflows/scrape_rtwb.yaml), you can see that we have ask GitHub to pull the secret called "`GDRIVE_PAT`" (`secret.GDRIVE_PAT`) and assign it to a variable called `GDRIVE_PAT` (`GDRIVE_PAT:`) in our environment (`env:`).
+
+```
+jobs: 
+  scrape_it:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GDRIVE_PAT: ${{ secrets.GDRIVE_PAT }}
+```
+
+This stores our access token in a variable called "`GDRIVE_PAT`" in the server's .Renvrion. Now, when we write `gs4_auth(path = Sys.getenv('GDRIVE_PAT'))`, our GitHub Action is allowed to access our Google Sheet! SUCCESS!
+
+The neatest part is that this server is created and destroyed during this session, and our secret is never put out in the open. Completely secure!
