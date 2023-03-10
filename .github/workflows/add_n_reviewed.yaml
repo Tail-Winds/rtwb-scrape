@@ -1,4 +1,4 @@
-name: rtwb_n_reviewed
+name: rtwb_scrape
 
 # https://crontab.guru/
 on:
@@ -30,7 +30,12 @@ jobs:
           any::googlesheets4
           any::rvest
           any::dplyr
+          any::tidyr
+          any::lubridate
         
-    - name: Scrape with R script
+    - name: Scrape RTWB number reviewed
       run: Rscript "scrape_rtwb.R"
+      
+    - name: Scrape RTWB daily occurrence
+      run: Rscript "daily_occurrence_scraper.R"
       
