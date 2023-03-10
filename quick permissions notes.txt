@@ -1,0 +1,37 @@
+https://console.cloud.google.com/
+
+Make sure you're signed into the correct account! I ran into many hours of frustration trying to get permissions to work, only to find out that I had made the key in my *personal* account rather than my *institutional* account.
+
+Select or create a new project
+
+IAM & Admin > Service Accounts
+
+Create Service Account
+
+Add name, description, and edit permissions if desired
+
+dot/dot/dot on the right > manage keys
+
+Add key > create new key > json > create
+
+
+
+*** MAY NEED TO TURN ON API, NOT SURE ***
+
+Menu > APIs and Services
+
+Search for "sheets"
+
+Click "Google Sheets API"
+
+Click "Enable"
+
+*******
+
+
+You've basically just created a fake Google robot person. You need to give the fake Google robot person access to the document (like you would a real person) using the fake Google robot email that is listed within the Service Accounts section.
+
+
+Go into your GitHub repo. Settings > Secrets and variables > Actions > New repository secrets
+
+Copy/paste the JSON text in the file that was downloaded and paste it into the "Secret*" section. Give it a name. Click "Add secret".
