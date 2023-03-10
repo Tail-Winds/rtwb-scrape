@@ -4,7 +4,7 @@ name: rtwb_n_reviewed
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '30 5 * * *'
+    - cron:  '0 9 * * *'
 
 jobs: 
   scrape_it:
