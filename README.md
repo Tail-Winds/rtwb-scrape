@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Scrape data from the Ocean City buoy site
+# Scrape data from the Ocean City buoy site using GitHub Actions
 
 Files in this repository relate to scraping the data on the [Ocean City
 Real-time Whale Buoy (RTWB)
