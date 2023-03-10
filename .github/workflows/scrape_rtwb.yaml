@@ -1,4 +1,4 @@
-name: rtwb_scrape
+name: Scrape OCMD RTWB website
 
 # https://crontab.guru/
 on:
@@ -33,9 +33,9 @@ jobs:
           any::tidyr
           any::lubridate
         
-    - name: Scrape RTWB number reviewed
+    - name: Scrape number reviewed
       run: Rscript "scrape_rtwb.R"
       
-    - name: Scrape RTWB daily occurrence
+    - name: Scrape daily occurrence
       run: Rscript "daily_occurrence_scraper.R"
       
