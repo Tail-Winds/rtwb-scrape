@@ -34,8 +34,8 @@ jobs:
           any::lubridate
         
     - name: Scrape number reviewed
-      run: Rscript "scrape_rtwb.R"
+      run: Rscript "scheduled_code/scrape_rtwb.R"
       
     - name: Scrape daily occurrence
-      run: Rscript "daily_occurrence_scraper.R"
+      run: Rscript "scheduled_code/daily_occurrence_scraper.R"
       
