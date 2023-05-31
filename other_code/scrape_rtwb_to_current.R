@@ -24,7 +24,7 @@ n_reviewed <- function(date){
     )  
 }
 
-dates <- seq(as.Date('2022-07-20'), as.Date('2023-03-06'), by = 'day')
+dates <- seq(as.Date('2023-05-12'), as.Date('2023-05-29'), by = 'day')
 dates <- format(dates, '%Y%m%d')
 
 all_n_reviewed <- lapply(dates,
