@@ -7,6 +7,10 @@ library(rvest)
 # https://googlesheets4.tidyverse.org/articles/drive-and-sheets.html
 # https://github.com/Ryo-N7/CanPL_Analysis
 
+# If running this on your computer, uncomment the following, sign in on
+#   your browser, and skip line 14
+# gs4_auth()
+
 gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 
 n_reviewed <- function(date){
