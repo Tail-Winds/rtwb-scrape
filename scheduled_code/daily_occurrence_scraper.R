@@ -6,7 +6,12 @@ library(lubridate)
 library(googlesheets4)
 
 # Read in HTML using rvest::read_html
-whales_html <- read_html('http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml') 
+whales_html <- read_html(
+  # Year 2 URL
+  # 'http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml'
+  # Year 3 URL
+  'http://dcs.whoi.edu/mdoc1023/mdoc1023_mdoc.shtml'
+  ) 
 
 # Pull out the table using the XPath
 # (Ctrl + Shift + I in Chrome, then:
@@ -86,7 +91,10 @@ whale_summary <- whale_summary |>
 gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 
 # The sheet we are targeting:
-occurrence_sheet <- 'https://docs.google.com/spreadsheets/d/1hGFPbmarhzRI_zf-E01mVEZKCjP7dezYsTQihKhUgZs/edit#gid=0'
+occurrence_sheet <- 
+  # Year 2 URL for "Webscraper_Real-time whale occurrence Monthly_year2" (HIDDEN)
+  # Year 3 URL for "Webscraper_Real-time whale occurrence Monthly_year3"
+  'https://docs.google.com/spreadsheets/d/10fvxJVwp5c8r0It3jYClakmFE7cRW70S63f48dizPsI'
 
 # Remove previously-scraped sheets (anything containing the text "Scraper - " in
 #   its name)

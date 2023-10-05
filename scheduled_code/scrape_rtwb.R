@@ -8,7 +8,10 @@ yesterday <- format(Sys.Date() - 1, '%Y%m%d')
 
 # Create the URL where yesterday's data should be found
 yesterdays_url <- paste0(
-  'http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_',
+  # Year 2 base URL
+  # 'http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_',
+  # Year 3 base URL
+  'http://dcs.whoi.edu/mdoc1023/mdoc1023_mdoc_html/mdoc1023_mdoc_summary_',
   yesterday,
   '.html'
 ) |> 
@@ -40,7 +43,9 @@ gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 
 # Tack the number of reviewed pitch tracks to the bottom of the spreadsheet
 sheet_append(
-  'https://docs.google.com/spreadsheets/d/10tMVbEwzHaSPVQwaN8QP_BegXoIKNUKzJoaYkrViWIA/edit#gid=0',
+  # Year 2 URL for "Webscraper_TallyPeriods_year2" (HIDDEN)
+  # Year 3 URL for "Webscraper_TallyPeriods_year3"
+  'https://docs.google.com/spreadsheets/d/18zA7XAaZQTDdYxgaVf6GM8Kp-p8Wwa8BL6J2siALsaw/edit#gid=0',
   n_reviewed,
   sheet = 1
 )
