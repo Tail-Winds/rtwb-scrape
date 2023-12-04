@@ -40,7 +40,7 @@ dates <- seq(
   ### From this date...
   as.Date('2023-10-04'),
   ### To this date...
-  as.Date('2023-10-04'),
+  as.Date('2023-12-03'),
   by = 'day')
 dates <- format(dates, '%Y%m%d')
 
