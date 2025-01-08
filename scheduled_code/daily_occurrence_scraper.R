@@ -10,6 +10,7 @@ whales_html <- read_html(
   # Year 2 URL
   # 'http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml'
   # Year 3 URL
+  # Year 4 URL
   'https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc.shtml'
   ) 
 
@@ -93,8 +94,9 @@ gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 # The sheet we are targeting:
 occurrence_sheet <- 
   # Year 2 URL for "Webscraper_Real-time whale occurrence Monthly_year2" (HIDDEN)
-  # Year 3 URL for "Webscraper_Real-time whale occurrence Monthly_year3"
-  'https://docs.google.com/spreadsheets/d/1RubEzH8ZIZwxvrg1alknPX95ILDOMocK4v-JSNYNWN0/edit?gid=0#gid=0'
+  # Year 3 URL for "Webscraper_Real-time whale occurrence Monthly_year3" (HIDDEN)
+  # Year 4 URL for "Webscraper_Real-time whale occurrence Monthly_year4"
+  'https://docs.google.com/spreadsheets/d/1RubEzH8ZIZwxvrg1alknPX95ILDOMocK4v-JSNYNWN0'
 
 # Remove previously-scraped sheets (anything containing the text "Scraper - " in
 #   its name)

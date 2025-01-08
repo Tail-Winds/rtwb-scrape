@@ -1,5 +1,6 @@
 library(googlesheets4)
 library(rvest)
+library(dplyr)
 
 # This brings the Year 3 sheet up-to-date with October 4, 2023
 
@@ -26,7 +27,7 @@ n_reviewed <- function(date){
   
   read_html(daily_url) |> 
     html_element(xpath = '/html/body/table') |> 
-    html_table(na.strings = '')|> 
+    html_table(na.strings = '') |> 
     dplyr::summarize(date = unique(gsub(' .*', '', `Date/time`)),
                      n_reviewed = sum(!is.na(Tracks))
     )  
@@ -40,17 +41,17 @@ dates <- seq(
   ### From this date...
   as.Date('2024-10-22'),
   ### To this date...
-  as.Date('2025-01-08'),
+  as.Date('2025-01-07'),
   by = 'day')
 dates <- format(dates, '%Y%m%d')
 
 all_n_reviewed <- lapply(dates,
-                         n_reviewed)
-all_n_reviewed <- dplyr::bind_rows(all_n_reviewed)
+                         n_reviewed) |> 
+  bind_rows(all_n_reviewed)
 
 write_sheet(
   all_n_reviewed,
   # Year 2 URL for "Webscraper_TallyPeriods_year2" (HIDDEN)
   # Year 3 URL for "Webscraper_TallyPeriods_year3"
-  'https://docs.google.com/spreadsheets/d/18zA7XAaZQTDdYxgaVf6GM8Kp-p8Wwa8BL6J2siALsaw/edit#gid=0',
+  'https://docs.google.com/spreadsheets/d/1M293uj32-a_aSv8jhKsjEnZ7-eD7Rt0S80ggburvBe0',
   sheet = 1)

@@ -44,8 +44,9 @@ gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
 # Tack the number of reviewed pitch tracks to the bottom of the spreadsheet
 sheet_append(
   # Year 2 URL for "Webscraper_TallyPeriods_year2" (HIDDEN)
-  # Year 3 URL for "Webscraper_TallyPeriods_year3"
-  'https://docs.google.com/spreadsheets/d/18zA7XAaZQTDdYxgaVf6GM8Kp-p8Wwa8BL6J2siALsaw/edit#gid=0',
+  # Year 3 URL for "Webscraper_TallyPeriods_year3" (HIDDEN)
+  # Year 4 URL for "Webscraper_TallyPeriods_year4"
+  'https://docs.google.com/spreadsheets/d/1M293uj32-a_aSv8jhKsjEnZ7-eD7Rt0S80ggburvBe0',
   n_reviewed,
   sheet = 1
 )
