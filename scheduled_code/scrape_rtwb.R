@@ -11,7 +11,7 @@ yesterdays_url <- paste0(
   # Year 2 base URL
   # 'http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_',
   # Year 3 base URL
-  'http://dcs.whoi.edu/mdoc1023/mdoc1023_mdoc_html/mdoc1023_mdoc_summary_',
+  'https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc_html/mdoc2410_mdoc_summary_',
   yesterday,
   '.html'
 ) |> 
