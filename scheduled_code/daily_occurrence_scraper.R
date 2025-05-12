@@ -12,29 +12,29 @@ whales_html <- read_html(
   # Year 3 URL
   # 'https://dcs.whoi.edu/mdoc1023/mdoc1023_mdoc.shtml'
   # Year 4 URL
-  'https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc.shtml'
+  "https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc.shtml"
 )
 
 # Pull out the table using the XPath
 # (Ctrl + Shift + I in Chrome, then:
 #   right click the element > Copy > Copy Full XPath)
 whales <- whales_html |>
-  html_element(xpath = '/html/body/table[1]') |>
+  html_element(xpath = "/html/body/table[1]") |>
   html_table()
 
 # The "style" HTML attribute encodes the information.
 # Pull out the "style" attribute from each table row, found using the XPath
 colors <- whales_html |>
-  html_elements(xpath = '/html/body/table[1]/tr/td') |>
-  html_attr('style')
+  html_elements(xpath = "/html/body/table[1]/tr/td") |>
+  html_attr("style")
 
 # There are other "style" attributes. Use base::grepl to pull out anything that
 # contains the text "background-color"
-colors <- colors[grepl('background-color', colors)]
+colors <- colors[grepl("background-color", colors)]
 
 # Use base::gsub to substitute the text "background-color:" with nothing
 #   (delete the text "background-color:" from everything, leaving just the color)
-colors <- gsub('background-color:', '', colors)
+colors <- gsub("background-color:", "", colors)
 
 # This has created a character vector, but it's really a 4-column matrix with
 #   the same amount of rows as the "whales" data frame made above.
@@ -52,14 +52,14 @@ whales <- whales |>
     across(
       everything(),
       ~ case_when(
-        . == 'lightgray' ~ 'not detected',
-        . == 'yellow' ~ 'possibly detected',
-        . == 'red' ~ 'detected',
+        . == "lightgray" ~ "not detected",
+        . == "yellow" ~ "possibly detected",
+        . == "red" ~ "detected",
         T ~ .
       )
     ),
     # Convert the "Date" column to R's Date class
-    Date = as.Date(Date, format = '%m/%d/%Y')
+    Date = as.Date(Date, format = "%m/%d/%Y")
   )
 
 # Create summary table
@@ -75,14 +75,14 @@ whale_summary <- whales |>
   # Create the summary
   summarize(
     `Monitoring Days` = n(),
-    `# Days PD only SW` = sum(`Sei whale` == 'possibly detected'),
-    `# Days D SW` = sum(`Sei whale` == 'detected'),
-    `# Days PD only FW` = sum(`Fin whale` == 'possibly detected'),
-    `# Days D FW` = sum(`Fin whale` == 'detected'),
-    `# Days PD only RW` = sum(`Right whale` == 'possibly detected'),
-    `# Days D RW` = sum(`Right whale` == 'detected'),
-    `# Days PD only HW` = sum(`Humpback whale` == 'possibly detected'),
-    `# Days D HW` = sum(`Humpback whale` == 'detected')
+    `# Days PD only SW` = sum(`Sei whale` == "possibly detected"),
+    `# Days D SW` = sum(`Sei whale` == "detected"),
+    `# Days PD only FW` = sum(`Fin whale` == "possibly detected"),
+    `# Days D FW` = sum(`Fin whale` == "detected"),
+    `# Days PD only RW` = sum(`Right whale` == "possibly detected"),
+    `# Days D RW` = sum(`Right whale` == "detected"),
+    `# Days PD only HW` = sum(`Humpback whale` == "possibly detected"),
+    `# Days D HW` = sum(`Humpback whale` == "detected")
   )
 
 # Add summary row
@@ -94,32 +94,32 @@ whale_summary <- whale_summary |>
   )
 
 # Get Google Drive authorization token from the GitHub secrets vault
-gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
+gs4_auth(path = Sys.getenv("GDRIVE_PAT"))
 
 # The sheet we are targeting:
 occurrence_sheet <-
   # Year 2 URL for "Webscraper_Real-time whale occurrence Monthly_year2" (HIDDEN)
   # Year 3 URL for "Webscraper_Real-time whale occurrence Monthly_year3" (HIDDEN)
   # Year 4 URL for "Webscraper_Real-time whale occurrence Monthly_year4"
-  'https://docs.google.com/spreadsheets/d/1RubEzH8ZIZwxvrg1alknPX95ILDOMocK4v-JSNYNWN0'
+  "https://docs.google.com/spreadsheets/d/1RubEzH8ZIZwxvrg1alknPX95ILDOMocK4v-JSNYNWN0"
 
 # Remove previously-scraped sheets (anything containing the text "Scraper - " in
 #   its name)
 sheet_delete(
   occurrence_sheet,
-  grep('Scraper - ', sheet_names(occurrence_sheet))
+  grep("Scraper - ", sheet_names(occurrence_sheet))
 )
 
 # Add newly-scraped full table, tagged with the current time (UTC)
 sheet_write(
   whales,
   occurrence_sheet,
-  sheet = paste0('Scraper - Full table ', Sys.time())
+  sheet = paste0("Scraper - Full table ", as.POSIXct(Sys.time(), tz = "UTC"))
 )
 
 # Add newly-scraped and summarized table, tagged with the current time (UTC)
 sheet_write(
   whale_summary,
   occurrence_sheet,
-  sheet = paste0('Scraper - Summary ', Sys.time())
+  sheet = paste0("Scraper - Summary ", as.POSIXct(Sys.time(), tz = "UTC"))
 )
