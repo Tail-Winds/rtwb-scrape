@@ -40,7 +40,4 @@ jobs:
       
     - name: Scrape daily occurrence
       run: Rscript "scheduled_code/daily_occurrence_scraper.R"
-    
-    - name: Keep GH action alive if no commit in 50 days
-      uses: gautamkrishnar/keepalive-workflow@v1
       
