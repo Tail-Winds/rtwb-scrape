@@ -24,6 +24,7 @@ This process uses the code in [`scrape_rtwb.R`](https://github.com/Tail-Winds/rt
 
 Should the Google Sheet get deleted, run [`scrape_rtwb_to_current.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/other_code/scrape_rtwb_to_current.R) and change the second date in [line 27](https://github.com/Tail-Winds/rtwb-scrape/blob/main/other_code/scrape_rtwb_to_current.R#L27) with yesterday's date to bring everything up to date.
 
+If running from *delphinus*, make sure the correct `.Renviron` file has the correct PAT.
 
 ## Daily occurrence table
 
