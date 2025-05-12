@@ -14,20 +14,20 @@ yesterdays_url <- paste0(
   'https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc_html/mdoc2410_mdoc_summary_',
   yesterday,
   '.html'
-) |> 
+) |>
   URLencode()
 
 
-n_reviewed <- yesterdays_url |> 
+n_reviewed <- yesterdays_url |>
   # Read in the HTML using rvest::read_html
-  read_html() |> 
+  read_html() |>
   # Select the table using the XPath
   # (Ctrl + Shift + I in Chrome, then:
   #   right click the element > Copy > Copy Full XPath)
-  html_element(xpath = '/html/body/table') |> 
+  html_element(xpath = '/html/body/table') |>
   # Tell R that this is a table, and NAs are blanks, not the text "NA" that
   #   it assumes
-  html_table(na.strings = '')|> 
+  html_table(na.strings = '') |>
   summarize(
     # Pull out the date by deleting the time data (substituting anything after
     #   a space (' .*') with nothing ('')) and selecting one (unique)
@@ -35,7 +35,7 @@ n_reviewed <- yesterdays_url |>
     # Find the number of reviewed pitch tracks by adding up everything that
     #   is not NA
     n_reviewed = sum(!is.na(Tracks))
-  )  
+  )
 
 
 # Get Google Drive authorization token from the GitHub secrets vault
@@ -50,7 +50,7 @@ sheet_append(
   n_reviewed,
   sheet = 1
 )
-  
+
 # https://www.r-bloggers.com/2021/09/creating-a-data-pipeline-with-github-actions-the-googledrive-package-for-the-canadian-premier-league-soccer-data-initiative/
 
 # https://github.com/marketplace/actions/google-sheets-secrets-action
