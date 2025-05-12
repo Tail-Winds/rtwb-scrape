@@ -12,11 +12,12 @@ knitr::opts_chunk$set(
 ```
 
 # Scrape data from the Ocean City buoy site using GitHub Actions
-Files in this repository relate to scraping the data on the [Ocean City Real-time Whale Buoy (RTWB) website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml).
+## ! Note: Scheduled scrapers have moved from GitHub Actions to the *delphinus* server
+Files in this repository relate to scraping the data on the [Ocean City Real-time Whale Buoy (RTWB) website](https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc.shtml).
 
 ## Summarize number of analyzed periods
 
-This repository uses a GitHub Action to scrape the number of tracks per day on the ["Automated detection data" table](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary.html#table). The table is scraped and results posted to a Google Sheet on the private TailWinds Google Drive every day at 09:00 UTC.
+This repository uses a GitHub Action to scrape the number of tracks per day on the ["Automated detection data" table](https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc_html/mdoc2410_mdoc_summary.html#table). The table is scraped and results posted to a Google Sheet on the private TailWinds Google Drive every day at 09:00 UTC.
 
 Refer to the [raw walkthrough document](https://github.com/Tail-Winds/rtwb-scrape/blob/main/walkthroughs/rtwb_scrape_walkthrough.qmd), or download the [compiled version](https://github.com/Tail-Winds/rtwb-scrape/blob/main/walkthroughs/rtwb_scrape_walkthrough.html) and open with your web browser.
 
@@ -28,7 +29,7 @@ If running from *delphinus*, make sure the correct `.Renviron` file has the corr
 
 ## Daily occurrence table
 
-Another GitHub Action is used to pull in the table under "Data analyst review" on the [RTWB website](http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc.shtml). The routine sources [`daily_occurrence_scraper.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/daily_occurrence_scraper.R) and runs immediately after that outlined above at 9:00AM UTC.
+Another GitHub Action is used to pull in the table under "Data analyst review" on the [RTWB website](https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc.shtml). The routine sources [`daily_occurrence_scraper.R`](https://github.com/Tail-Winds/rtwb-scrape/blob/main/scheduled_code/daily_occurrence_scraper.R) and runs immediately after that outlined above at 9:00AM UTC.
 
 The general idea is:
 
