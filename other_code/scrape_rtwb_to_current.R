@@ -12,24 +12,28 @@ library(dplyr)
 #   your browser, and skip line 14
 # gs4_auth()
 
-gs4_auth(path = Sys.getenv('GDRIVE_PAT'))
+gs4_auth(path = Sys.getenv("GDRIVE_PAT"))
 
 n_reviewed <- function(date) {
   daily_url <- paste0(
     ## Year 2 base URL
     # 'http://dcs.whoi.edu/mdoc0722/mdoc0722_mdoc_html/mdoc0722_mdoc_summary_',
     ## Year 3 base URL
-    'https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc_html/mdoc2410_mdoc_summary_',
+    # 'http://dcs.whoi.edu/mdoc1023/mdoc1023_mdoc_html/mdoc1023_mdoc_summary_',
+    ## Year 3.5 base URL
+    # 'https://dcs.whoi.edu/mdoc2410/mdoc2410_mdoc_html/mdoc2410_mdoc_summary_',
+    ## Year 4 base URL
+    "http://dcs.whoi.edu/mdoc2505/mdoc2505_mdoc_html/mdoc2505_mdoc_summary_",
     date,
-    '.html'
+    ".html"
   ) |>
     URLencode()
 
   read_html(daily_url) |>
-    html_element(xpath = '/html/body/table') |>
-    html_table(na.strings = '') |>
+    html_element(xpath = "/html/body/table") |>
+    html_table(na.strings = "") |>
     dplyr::summarize(
-      date = unique(gsub(' .*', '', `Date/time`)),
+      date = unique(gsub(" .*", "", `Date/time`)),
       n_reviewed = sum(!is.na(Tracks))
     )
 }
@@ -38,15 +42,17 @@ dates <- seq(
   ## Year 2 dates
   # as.Date('2022-07-20'), as.Date('2023-10-04'),
   ## Year 3 dates
-  # as.Date(STARTDATEHERE!!!), as.date('2024-10-21')
-
+  # as.Date(STARTDATEHERE!!!), as.date('2024-10-21'),
+  ## Year 3.5 dates
+  # as.Date('2024-10-22'), as.Date('2025-05-19'),
+  # Year 4 dates
   ### From this date...
-  as.Date('2024-10-22'),
+  as.Date("2025-05-20"),
   ### To this date...
-  as.Date('2025-05-11'),
-  by = 'day'
+  as.Date("2025-05-22"),
+  by = "day"
 )
-dates <- format(dates, '%Y%m%d')
+dates <- format(dates, "%Y%m%d")
 
 all_n_reviewed <- lapply(dates, n_reviewed) |>
   bind_rows()
@@ -55,7 +61,8 @@ write_sheet(
   all_n_reviewed,
   # Year 2 URL for "Webscraper_TallyPeriods_year2" (HIDDEN)
   # Year 3 URL for "Webscraper_TallyPeriods_year3" (HIDDEN)
+  # Year 3.5 URL for "Webscraper_TallyPeriods_year3.5" (HIDDEN)
   # Year 4 URL for "Webscraper_TallyPeriods_year4"
-  'https://docs.google.com/spreadsheets/d/1M293uj32-a_aSv8jhKsjEnZ7-eD7Rt0S80ggburvBe0',
+  "https://docs.google.com/spreadsheets/d/1m3-4X8IdM3QxSYHk1pNeSXZzg7rbxba6XHP-28LfwgA",
   sheet = 1
 )
